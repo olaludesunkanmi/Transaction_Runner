@@ -11,25 +11,35 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const index = require("./routes/index");
-// const employeeRoute = require('./routes/employee.routes');
+const login = require("./middlewares/login");
+const user = require("./routes/user");
+const transactions = require("./routes/transactions");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
-app.use(index);
-// app.use('/api/', employeeRoute);
+app.use(login);
+app.use("/api/v1", transactions);
+app.use("/api/v1/auth", user);
 
-// Load Routers
-// app.use("/");
+app.use(index);
 
 // Page not found error
-app.get("*", (req, res) => {
+app.all("*", (req, res) => {
   res.send("This route does not exist");
 });
 
-app.listen(port, () => {
+const SERVER = app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
 });
 
-module.exports = app;
+// Handles Connection Error
+process.on("unhandledRejection", (error, promise) => {
+  console.log(`${error.message}`);
+  SERVER.close(() => {
+    process.exit(1);
+  });
+});
+
+//module.exports = app;

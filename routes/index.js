@@ -1,13 +1,13 @@
 const express = require("express");
 
-const router = express.Router();
+const app = express();
 
-router.get("/api", (req, res) => {
+app.get("/", (req, res) => {
   res.status(200).send({
     success: "true",
     message: "Welcome to transaction runner",
-    version: "1.0.0",
+    version: "1.0",
   });
 });
 
-module.exports = router;
+module.exports = app;
