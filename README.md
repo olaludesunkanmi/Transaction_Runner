@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/olaludesunkanmi/Transaction_Runner.svg?branch=main)](https://travis-ci.com/olaludesunkanmi/Transaction_Runner)
+
 ## Project Overview
 
 An app where user transaction mocks a financial ledger
