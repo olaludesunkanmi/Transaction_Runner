@@ -19,9 +19,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
+app.use("/api/v1/auth", user);
 app.use(login);
 app.use("/api/v1", transactions);
-app.use("/api/v1/auth", user);
 
 app.use(index);
 
@@ -42,4 +42,4 @@ process.on("unhandledRejection", (error, promise) => {
   });
 });
 
-//module.exports = app;
+module.exports = app;

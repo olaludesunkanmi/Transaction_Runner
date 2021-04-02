@@ -25,14 +25,15 @@ module.exports = async (req, res) => {
         });
       }
       const authUser = rows[0].id;
-      const token = generateToken(authUser);
+      const authEmail = rows[0].email;
+      const token = generateToken(authUser, authEmail);
       return res.status(200).json({
         status: 200,
-        data: [
-          {
-            token,
-          },
-        ],
+
+        data: {
+          message: "You're logged in successfully",
+          token,
+        },
       });
     }
   } catch (error) {

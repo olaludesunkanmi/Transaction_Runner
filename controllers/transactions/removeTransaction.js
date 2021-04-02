@@ -1,19 +1,25 @@
 const db = require("../../config/database");
 
 module.exports = async (req, res) => {
-  const value = req.user.id;
+  if (!req.isAuth) {
+    return res.status(403).json({
+      status: 403,
+      message: "You cannot perform this operation",
+    });
+  }
   try {
-    const user = await db.query("SELECT * FROM users WHERE id = $1", [value]);
+    const user = await db.query("SELECT * FROM users WHERE id = $1", [
+      req.user.id,
+    ]);
     const transaction = await db.query(
       "SELECT * FROM transactions WHERE id = $1",
-      [value]
+      [req.user.id]
     );
     if (!transaction.rows[0]) {
       res.status(404).json({
         status: 404,
-        error: "Transaction not found",
+        message: "Transaction not found",
       });
-      return;
     }
     if (
       transaction.rows[0].id !== req.user.id &&
@@ -21,12 +27,11 @@ module.exports = async (req, res) => {
     ) {
       res.status(403).json({
         status: 403,
-        error: "Sorry, you can not delete this car",
+        message: "Sorry, you can not delete this transaction",
       });
-      return;
     }
 
-    await db.query("DELETE FROM transactions WHERE id = $1", [value]);
+    await db.query("DELETE FROM transactions WHERE id = $1", [req.user.id]);
 
     res.status(200).send({
       status: 200,
@@ -35,7 +40,7 @@ module.exports = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       status: 500,
-      error: "Something went wrong",
+      message: "Something went wrong",
     });
   }
 };

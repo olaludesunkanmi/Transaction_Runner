@@ -49,8 +49,8 @@ exports.signUpValidator = async (req, res, next) => {
       email,
     ]);
     if (rows[0]) {
-      return res.status(409).json({
-        status: 409,
+      return res.status(400).json({
+        status: 400,
         error: "Email already exists",
       });
     }
@@ -61,7 +61,7 @@ exports.signUpValidator = async (req, res, next) => {
     });
   }
   // Password Validations
-  if (!password || typeof password !== 'string') {
+  if (!password || typeof password !== "string") {
     return res.status(400).json({
       status: 400,
       error: "Password is required and must be a string",

@@ -17,23 +17,22 @@ module.exports = async (req, res) => {
         "INSERT INTO transactions (incomingtransactions, outgoingtransactions, amount) VALUES ($1, $2, $3) returning *",
         transaction
       );
-      const authUser = rows[0].id;
-      const authEmail = rows[0].email;
-      const token = generateToken(authUser, authEmail);
-      return res.status(201).json({
-        status: 201,
-        data: [
-          {
-            token,
-            message: "User created succesfully",
-          },
-        ],
-      });
     }
-  } catch (error) {
+
+    const authUser = rows[0].id;
+    const authEmail = rows[0].email;
+    const token = generateToken(authUser, authEmail);
+    return res.status(201).json({
+      status: 201,
+      data: {
+        message: "User created succesfully",
+        token,
+      },
+    });
+  } catch (err) {
     return res.status(500).json({
       status: 500,
-      error: error.message,
+      error: err.message,
     });
   }
 };

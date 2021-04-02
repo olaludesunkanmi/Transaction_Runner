@@ -1,9 +1,22 @@
 const db = require("../../config/database");
 
 module.exports = async (req, res) => {
+  if (!req.isAuth) {
+    return res.status(403).json({
+      status: 403,
+      message: "You cannot perform this operation",
+    });
+  }
   const id = req.user.id;
   const { amount } = req.body;
   let increment = 0;
+  const user = await db.query("SELECT * FROM users WHERE id = $1", [id]);
+  if (user.rows[0].email !== req.user.email) {
+    return res.status(403).json({
+      status: 403,
+      message: "You cannot perform this operation",
+    });
+  }
   try {
     const findUserTransaction = await db.query(
       "SELECT * FROM transactions WHERE id = $1",
@@ -13,13 +26,13 @@ module.exports = async (req, res) => {
     if (findUserTransaction.rowCount === 0) {
       return res.status(404).json({
         status: 404,
-        error: "The transaction with this user cannot be found",
+        message: "The transaction with this user cannot be found",
       });
     }
     if (!findUser.rowCount === 0) {
       return res.status(404).json({
         status: 404,
-        error: "This user cannot be found",
+        message: "This user cannot be found",
       });
     }
     increment = findUserTransaction.rows[0].outgoingtransactions;
